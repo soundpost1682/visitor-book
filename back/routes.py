@@ -17,9 +17,9 @@ def create_friend():
         data = request.json
 
         # validation
-        required_fields = ['name', 'role', 'description', 'gender']
+        required_fields = ["name", "role", "description", "gender"]
         for field in required_fields:
-            if field not in data:
+            if field not in data or not data.get(field):
                 return jsonify({"Error!": f'Missing require field : {field}'}), 400
 
 
@@ -30,9 +30,9 @@ def create_friend():
 
         # fetch avatar img based on gender
         if gender == 'male':
-            img_url = f'https://avatar.iran.liara.run/public/boy'
+            img_url = f'https://avatar.iran.liara.run/public/boy?username={name}'
         elif gender == 'female':
-            img_url = f'https://avatar.iran.liara.run/public/girl'
+            img_url = f'https://avatar.iran.liara.run/public/girl?username={name}'
         else:
             img_url == None
         
@@ -41,7 +41,7 @@ def create_friend():
         db.session.add(new_friend)
         db.session.commit()
 
-        return jsonify({'msg':'Friend created done'}), 201
+        return jsonify(new_friend.to_json()), 201
     
     # handle exception
     except Exception as e:
@@ -60,7 +60,7 @@ def delete_friend(id):
         return jsonify({"msg" : "friend deteted"}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({"Error" : str(e)})
+        return jsonify({"Error" : str(e)}), 500
 
 # update friend profile
 @app.route("/api/friends/<int:id>", methods=["PATCH"])
