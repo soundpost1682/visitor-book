@@ -34,49 +34,61 @@ const CreateUserModal = ({ setUsers }) => {
   const toast = useToast();
 
   const handleCreateUser = async (e) => {
+    console.log(e);
     e.preventDefault();
     setIsLoading(true);
-    try {
-      const res = await fetch(BASE_URL + "/friends", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(inputs),
-      });
+    // try {
+    console.log("!!");
+    console.log(inputs);
+    // inputs.name = "asd";
+    // inputs.role = "rooool";
+    // inputs.description = "discr";
+    // inputs.gender = "gen";
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error);
-      }
+    // inputs.name = name;
+    const res = await fetch(BASE_URL + "/friends", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(inputs),
+    });
 
-      toast({
-        status: "success",
-        title: "Yihoo!",
-        description: "Friend created done.",
-        duration: 2000,
-        position: "top-center",
-      });
-
-      onClose();
-      setUsers((prevUsers) => [...prevUsers, data]);
-      setInputs({
-        name: "",
-        role: "",
-        description: "",
-        gender: "",
-      });
-    } catch (error) {
-      toast({
-        status: "error",
-        title: "An error occurred i said",
-        description: error.message,
-        position: "top-center",
-        duration: 4000,
-      });
-    } finally {
-      setIsLoading(false);
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error);
     }
+
+    console.log("data");
+    console.log(data);
+
+    toast({
+      status: "success",
+      title: "Yihoo!",
+      description: "Friend created done.",
+      duration: 2000,
+      position: "top-center",
+    });
+
+    onClose();
+    setUsers((prevUsers) => [...prevUsers, data]);
+    setInputs({
+      name: "",
+      role: "",
+      description: "",
+      gender: "",
+    });
+    // } catch (error) {
+    toast({
+      status: "error",
+      title: "An error occurred I said",
+      description: error.message,
+      position: "top-center",
+      duration: 4000,
+    });
+    // } finally {
+    setIsLoading(false);
+    // }
   };
   return (
     <>
@@ -100,9 +112,10 @@ const CreateUserModal = ({ setUsers }) => {
                   <Input
                     placeholder='John Doe'
                     defaultValue={inputs.name}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, name: e.target.value })
-                    }
+                    onChange={(e) => {
+                      console.log("hasdasd", e.target.value);
+                      setInputs(inputs.name);
+                    }}
                   />
                 </FormControl>
 

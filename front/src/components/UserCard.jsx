@@ -28,7 +28,7 @@ const UserCard = ({ user, setUsers }) => {
       }
       setUsers((prevUsers) => prevUsers.filter((u) => u.id !== user.id));
       toast({
-        title: "success",
+        title: "Deleted!",
         status: "success",
         description: "Friend deleted done.",
         duration: 2000,
