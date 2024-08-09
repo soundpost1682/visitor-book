@@ -1,6 +1,5 @@
 import {
   Button,
-  Flex,
   FormControl,
   FormLabel,
   Input,
@@ -17,169 +16,152 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { BiAddToQueue } from "react-icons/bi";
 import { BASE_URL } from "../App";
+import { useState } from "react";
+import { Formik, Form, Field } from 'formik';
 
 const CreateUserModal = ({ setUsers }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
-  const [inputs, setInputs] = useState({
-    name: "",
-    role: "",
-    description: "",
-    gender: "",
-  });
-
   const toast = useToast();
 
-  const handleCreateUser = async (e) => {
-    console.log(e);
-    e.preventDefault();
+  const handleCreateUser = async (values, actions) => {
     setIsLoading(true);
-    // try {
-    console.log("!!");
-    console.log(inputs);
-    // inputs.name = "asd";
-    // inputs.role = "rooool";
-    // inputs.description = "discr";
-    // inputs.gender = "gen";
+    try {
+      console.log(values);
+      const res = await fetch(BASE_URL + "/friends", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-    // inputs.name = name;
-    const res = await fetch(BASE_URL + "/friends", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(inputs),
-    });
+      const data = await res.json();
 
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error);
+      if (!res.ok) {
+        throw new Error(data.error);
+      }
+
+      toast({
+        status: "success",
+        title: "Yihoo!",
+        description: "Friend created successfully.",
+        duration: 2000,
+        position: "top-center",
+      });
+
+      setUsers((prevUsers) => [...prevUsers, data]);
+      onClose();
+      actions.resetForm();
+    } catch (error) {
+      toast({
+        status: "error",
+        title: "An error occurred",
+        description: error.message,
+        position: "top-center",
+        duration: 4000,
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    console.log("data");
-    console.log(data);
-
-    toast({
-      status: "success",
-      title: "Yihoo!",
-      description: "Friend created done.",
-      duration: 2000,
-      position: "top-center",
-    });
-
-    onClose();
-    setUsers((prevUsers) => [...prevUsers, data]);
-    setInputs({
-      name: "",
-      role: "",
-      description: "",
-      gender: "",
-    });
-    // } catch (error) {
-    toast({
-      status: "error",
-      title: "An error occurred I said",
-      description: error.message,
-      position: "top-center",
-      duration: 4000,
-    });
-    // } finally {
-    setIsLoading(false);
-    // }
   };
+
+
   return (
     <>
-      <Button onClick={onOpen}>
-        <BiAddToQueue size={20} />
-      </Button>
+      <Button onClick={onOpen}>Open Modal</Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create User</ModalHeader>
+          <ModalCloseButton />
+          <Formik
+            initialValues={{
+              name: "",
+              role: "",
+              description: "",
+              gender: "",
+            }}
+            onSubmit={handleCreateUser}
+          >
+            {({ values, handleChange, handleSubmit, isSubmitting }) => (
+              <Form onSubmit={handleSubmit}>
+                <ModalBody>
+                  <FormControl>
+                    <FormLabel>Full name</FormLabel>
+                    <Field
+                      as={Input}
+                      name="name"
+                      placeholder="John Doe"
+                      value={values.name}
+                      onChange={handleChange}
+                    />
+                  </FormControl>
 
-        <form onSubmit={handleCreateUser}>
-          <ModalContent>
-            <ModalHeader>Welcome new visitor! 😄</ModalHeader>
-            <ModalCloseButton />
+                  <FormControl mt={4}>
+                    <FormLabel>Role</FormLabel>
+                    <Field
+                      as={Input}
+                      name="role"
+                      placeholder="Software Engineer"
+                      value={values.role}
+                      onChange={handleChange}
+                    />
+                  </FormControl>
 
-            <ModalBody pb={6}>
-              <Flex alignItems={"center"} gap={4}>
-                {/* left */}
-                <FormControl>
-                  <FormLabel>Full name</FormLabel>
-                  <Input
-                    placeholder='John Doe'
-                    defaultValue={inputs.name}
-                    onChange={(e) => {
-                      console.log("hasdasd", e.target.value);
-                      setInputs(inputs.name);
-                    }}
-                  />
-                </FormControl>
+                  <FormControl mt={4}>
+                    <FormLabel>Description</FormLabel>
+                    <Field
+                      as={Textarea}
+                      name="description"
+                      placeholder="Description"
+                      value={values.description}
+                      onChange={handleChange}
+                    />
+                  </FormControl>
 
-                {/* right */}
-                <FormControl>
-                  <FormLabel>Role</FormLabel>
-                  <Input
-                    placeholder='Software Engineer'
-                    defaultValue={inputs.role}
-                    onChange={(e) =>
-                      setInputs({ ...inputs, role: e.target.value })
-                    }
-                  />
-                </FormControl>
-              </Flex>
+                  <FormControl mt={4}>
+                    <FormLabel>Gender</FormLabel>
+                    <RadioGroup
+                      name="gender"
+                      value={values.gender}
+                      onChange={handleChange}
+                    >
+                      <Field
+                        as={Radio}
+                        name="gender"
+                        value="male"
+                        mr={3}
+                      >
+                        Male
+                      </Field>
+                      <Field
+                        as={Radio}
+                        name="gender"
+                        value="female"
+                      >
+                        Female
+                      </Field>
+                    </RadioGroup>
+                  </FormControl>
+                </ModalBody>
 
-              <FormControl mt={4}>
-                <FormLabel>Description</FormLabel>
-                <Textarea
-                  resize={"none"}
-                  overflow={"hidden"}
-                  placeholder='He is a SWE.'
-                  defaultValue={inputs.description}
-                  onChange={(e) =>
-                    setInputs({ ...inputs, description: e.target.value })
-                  }
-                />
-              </FormControl>
-
-              <RadioGroup mt={4}>
-                <Flex gap={5}>
-                  <Radio
-                    defaultValue='male'
-                    onChange={(e) =>
-                      setInputs({ ...inputs, gender: e.target.value })
-                    }
+                <ModalFooter>
+                  <Button
+                    colorScheme="blue"
+                    type="submit"
+                    isLoading={isSubmitting}
                   >
-                    Male
-                  </Radio>
-                  <Radio
-                    defaultValue='female'
-                    onChange={(e) =>
-                      setInputs({ ...inputs, gender: e.target.value })
-                    }
-                  >
-                    Female
-                  </Radio>
-                </Flex>
-              </RadioGroup>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button
-                colorScheme='blue'
-                mr={3}
-                type='submit'
-                isLoading={isLoading}
-              >
-                Add
-              </Button>
-              <Button onClick={onClose}>Cancel</Button>
-            </ModalFooter>
-          </ModalContent>
-        </form>
+                    Create User
+                  </Button>
+                  <Button onClick={onClose} ml={3}>Cancel</Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        </ModalContent>
       </Modal>
     </>
   );
