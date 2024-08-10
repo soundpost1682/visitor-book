@@ -19,19 +19,20 @@ import {
 import { useState } from "react";
 import { BiEditAlt } from "react-icons/bi";
 import { BASE_URL } from "../App";
+import { Formik, Form, Field } from "formik";
 
 function EditModal({ setUsers, user }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
-  const [inputs, setInputs] = useState({
-    name: user.name,
-    role: user.role,
-    description: user.description,
-  });
+  // const [inputs, setInputs] = useState({
+  //   name: user.name,
+  //   role: user.role,
+  //   description: user.description,
+  // });
   const toast = useToast();
 
-  const handleEditUser = async (e) => {
-    e.preventDefault();
+  const handleEditUser = async (Input, actions) => {
+    // e.preventDefault();
     setIsLoading(true);
     try {
       const res = await fetch(BASE_URL + "/friends/" + user.id, {
@@ -39,7 +40,7 @@ function EditModal({ setUsers, user }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(inputs),
+        body: JSON.stringify(Input),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -82,9 +83,67 @@ function EditModal({ setUsers, user }) {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <form onSubmit={handleEditUser}>
+        <ModalContent>
+          <ModalHeader>Edit status</ModalHeader>
+          <ModalCloseButton />
+          <Formik
+            initialValues={{
+              name: user.name,
+              role: user.role,
+              description: user.description,
+            }}
+            onSubmit={handleEditUser}
+          >
+            {({ values, handleChange, handleSubmit, isSubmitting }) => (
+              <Form onSubmit={handleSubmit}>
+                <ModalBody>
+                  <FormControl>
+                    <FormLabel>Changed name?</FormLabel>
+                    <Field
+                      as={Input}
+                      name='name'
+                      value={values.name}
+                      onChange={handleChange}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>New position?</FormLabel>
+                    <Field
+                      as={Input}
+                      name='role'
+                      value={values.role}
+                      onChange={handleChange}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Description</FormLabel>
+                    <Field
+                      as={Input}
+                      name='description'
+                      value={values.description}
+                      onChange={handleChange}
+                    />
+                  </FormControl>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    colorScheme='blue'
+                    type='submit'
+                    isLoading={isSubmitting}
+                  >
+                    Edit
+                  </Button>
+                  <Button onClick={onClose} ml={3}>
+                    Cancle
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        </ModalContent>
+        {/* <form onSubmit={handleEditUser}>
           <ModalContent>
-            <ModalHeader>My new BFF 😍</ModalHeader>
+            <ModalHeader>Status changed ? 😜</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
               <Flex alignItems={"center"} gap={4}>
@@ -143,7 +202,7 @@ function EditModal({ setUsers, user }) {
               <Button onClick={onClose}>Cancel</Button>
             </ModalFooter>
           </ModalContent>
-        </form>
+        </form> */}
       </Modal>
     </>
   );

@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { BASE_URL } from "../App";
 import { useState } from "react";
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field } from "formik";
 
 const CreateUserModal = ({ setUsers }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -28,7 +28,6 @@ const CreateUserModal = ({ setUsers }) => {
   const handleCreateUser = async (values, actions) => {
     setIsLoading(true);
     try {
-      console.log(values);
       const res = await fetch(BASE_URL + "/friends", {
         method: "POST",
         headers: {
@@ -67,10 +66,9 @@ const CreateUserModal = ({ setUsers }) => {
     }
   };
 
-
   return (
     <>
-      <Button onClick={onOpen}>Open Modal</Button>
+      <Button onClick={onOpen}>Leave your card</Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -93,8 +91,8 @@ const CreateUserModal = ({ setUsers }) => {
                     <FormLabel>Full name</FormLabel>
                     <Field
                       as={Input}
-                      name="name"
-                      placeholder="John Doe"
+                      name='name'
+                      placeholder='John Doe'
                       value={values.name}
                       onChange={handleChange}
                     />
@@ -104,8 +102,8 @@ const CreateUserModal = ({ setUsers }) => {
                     <FormLabel>Role</FormLabel>
                     <Field
                       as={Input}
-                      name="role"
-                      placeholder="Software Engineer"
+                      name='role'
+                      placeholder='Software Engineer'
                       value={values.role}
                       onChange={handleChange}
                     />
@@ -115,8 +113,8 @@ const CreateUserModal = ({ setUsers }) => {
                     <FormLabel>Description</FormLabel>
                     <Field
                       as={Textarea}
-                      name="description"
-                      placeholder="Description"
+                      name='description'
+                      placeholder='Description'
                       value={values.description}
                       onChange={handleChange}
                     />
@@ -125,23 +123,14 @@ const CreateUserModal = ({ setUsers }) => {
                   <FormControl mt={4}>
                     <FormLabel>Gender</FormLabel>
                     <RadioGroup
-                      name="gender"
+                      name='gender'
                       value={values.gender}
                       onChange={handleChange}
                     >
-                      <Field
-                        as={Radio}
-                        name="gender"
-                        value="male"
-                        mr={3}
-                      >
+                      <Field as={Radio} name='gender' value='male' mr={3}>
                         Male
                       </Field>
-                      <Field
-                        as={Radio}
-                        name="gender"
-                        value="female"
-                      >
+                      <Field as={Radio} name='gender' value='female'>
                         Female
                       </Field>
                     </RadioGroup>
@@ -150,13 +139,15 @@ const CreateUserModal = ({ setUsers }) => {
 
                 <ModalFooter>
                   <Button
-                    colorScheme="blue"
-                    type="submit"
+                    colorScheme='blue'
+                    type='submit'
                     isLoading={isSubmitting}
                   >
                     Create User
                   </Button>
-                  <Button onClick={onClose} ml={3}>Cancel</Button>
+                  <Button onClick={onClose} ml={3}>
+                    Cancel
+                  </Button>
                 </ModalFooter>
               </Form>
             )}

@@ -15,7 +15,6 @@ def get_friends():
 def create_friend():
     try:
         data = request.json
-        print(data)
 
         # validation
         required_fields = ["name", "role", "description", "gender"]
@@ -23,13 +22,11 @@ def create_friend():
             if field not in data or not data.get(field):
                 return jsonify({"Error!": f'Missing require field : {field}'}), 400
 
-        print('asdasd')
         name = data.get('name')
         role = data.get('role')
         description = data.get('description')
         gender = data.get('gender')
 
-        print(type(data))
 
         # fetch avatar img based on gender
         if gender == 'male':
@@ -38,13 +35,10 @@ def create_friend():
             img_url = f'https://avatar.iran.liara.run/public/girl?username={name}'
         else:
             img_url = None
-        print('before FR')
         new_friend = Friend(name=name, role=role, description=description, gender=gender, img_url=img_url)
 
         db.session.add(new_friend)
         db.session.commit()
-
-        print(new_friend)
 
         return jsonify(new_friend.to_json()), 201
     
