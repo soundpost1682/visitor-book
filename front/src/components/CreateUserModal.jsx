@@ -92,7 +92,7 @@ const CreateUserModal = ({ setUsers }) => {
                     <Field
                       as={Input}
                       name='name'
-                      placeholder='John Doe'
+                      placeholder='Name'
                       value={values.name}
                       onChange={handleChange}
                     />
@@ -103,7 +103,7 @@ const CreateUserModal = ({ setUsers }) => {
                     <Field
                       as={Input}
                       name='role'
-                      placeholder='Software Engineer'
+                      placeholder='Position'
                       value={values.role}
                       onChange={handleChange}
                     />
